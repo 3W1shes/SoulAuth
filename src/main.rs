@@ -74,6 +74,8 @@ pub struct AppState {
     pub lockout_service: Arc<AccountLockoutService>,
     /// 首个管理员的引导门。见 `routes::bootstrap`。
     pub bootstrap: Arc<routes::bootstrap::BootstrapGate>,
+    /// 受信内部地址免限流（`RATE_LIMIT_EXEMPT`）。见 `utils::rate_limit_exempt`。
+    pub rate_limit_exempt: Arc<utils::rate_limit_exempt::RateLimitExempt>,
 }
 
 fn build_cors_layer(config: &Config) -> CorsLayer {
@@ -336,12 +338,27 @@ async fn main() -> anyhow::Result<()> {
         }
     });
 
+    // 写错的项启动时就失败：静默忽略的话，运维以为配上了，受信服务照样被锁。
+    let rate_limit_exempt = Arc::new(
+        utils::rate_limit_exempt::RateLimitExempt::parse(
+            std::env::var("RATE_LIMIT_EXEMPT").ok().as_deref(),
+        )
+        .unwrap_or_else(|e| panic!("{e}")),
+    );
+    if !rate_limit_exempt.is_empty() {
+        warn!(
+            "RATE_LIMIT_EXEMPT: 以下 TCP 直连地址免限流（不看代理头）：{}",
+            rate_limit_exempt.describe()
+        );
+    }
+
     let app_state = Arc::new(AppState {
         db,
         config: config.clone(),
         rate_limiter: rate_limiter.clone(),
         lockout_service: lockout_service.clone(),
         bootstrap: bootstrap.clone(),
+        rate_limit_exempt,
     });
 
     let app = Router::new()

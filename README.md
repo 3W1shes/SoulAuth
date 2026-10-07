@@ -231,7 +231,7 @@ tested, and where it is still incomplete.
 
 ```text
 axum 0.6 · SurrealDB 3.0 · 72 paths / 85 operations · ~24k lines
-188 unit tests (no external dependencies) · 27 integration groups / 355 assertions
+192 unit tests (no external dependencies) · 27 integration groups / 355 assertions
 ```
 
 ---
@@ -429,7 +429,7 @@ surprises people during incident response.
 Two layers with different jobs. Neither substitutes for the other.
 
 ```bash
-cargo test              # 188 unit tests, no external dependencies
+cargo test              # 192 unit tests, no external dependencies
 cargo build && ./tests/integration.sh   # 27 groups, 355 assertions
 ```
 

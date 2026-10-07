@@ -83,6 +83,12 @@ pub async fn rate_limit_layer<B>(
     req: Request<B>,
     next: Next<B>,
 ) -> Response {
+    // 受信内部服务免限流 —— 只认 TCP 直连地址，不看可伪造的代理头。
+    // 账号锁定（连续输错口令）不在这里，照常生效。
+    if app_state.rate_limit_exempt.is_exempt(addr.ip()).await {
+        return next.run(req).await;
+    }
+
     let ip = client_ip(&addr, &headers, config.trust_proxy_headers);
     let endpoint = rate_limit_endpoint(&req);
 

@@ -206,7 +206,7 @@ Detection、Key Lifecycle 与 Tamper-evident Audit 建立持续保护。
 
 ```text
 axum 0.6 · SurrealDB 3.0 · 72 条路径 / 85 个 operation · 约 2.4 万行
-单元测试 188 项（零外部依赖）· 集成测试 27 组 355 项断言
+单元测试 192 项（零外部依赖）· 集成测试 27 组 355 项断言
 ```
 
 ---
@@ -391,7 +391,7 @@ curl -X POST localhost:8080/api/auth/logout -H "Authorization: Bearer $TOKEN"
 两层，分工不同，谁也替代不了谁。
 
 ```bash
-cargo test              # 单元测试 188 项，零外部依赖
+cargo test              # 单元测试 192 项，零外部依赖
 cargo build && ./tests/integration.sh   # 27 组 355 项断言
 ```
 
