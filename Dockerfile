@@ -15,6 +15,11 @@ RUN apt-get update \
 
 WORKDIR /build
 
+# 编译并发。默认 2：在 4C7G 这类小机器上满并发编译曾把整台机器压到硬重启。
+# 机器大的话构建时传 `--build-arg CARGO_BUILD_JOBS=8`。
+ARG CARGO_BUILD_JOBS=2
+ENV CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS}
+
 # 先只拷依赖清单并编译一个空壳，让依赖层能被 Docker 缓存复用 ——
 # 否则改一行源码就要重编整棵依赖树。
 COPY Cargo.toml Cargo.lock ./
